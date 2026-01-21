@@ -99,7 +99,7 @@
         #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: transform 0.5s ease-in-out; }
         #auth-screen.unlocked { transform: translateY(-100%); }
         .auth-container { text-align: center; }
-        .auth-input { background: #222; border: 1px solid #333; color: white; padding: 12px 20px; font-size: 1.2rem; border-radius: 12px; text-align: center; letter-spacing: 4px; margin-top: 20px; outline: none; transition: border 0.2s; }
+        .auth-input { background: #222; border: 1px solid #333; color: white; padding: 12px 20px; font-size: 1.2rem; border-radius: 12px; text-align: center; letter-spacing: 2px; margin-top: 20px; outline: none; transition: border 0.2s; width: 250px; }
         .auth-input:focus { border-color: #2563EB; }
         .auth-msg { color: #888; margin-top: 10px; font-size: 0.8rem; }
 
@@ -112,9 +112,8 @@
     <div id="auth-screen">
         <div class="auth-container">
             <h1>Job Tracker Locked</h1>
-            <input type="password" id="pinInput" class="auth-input" placeholder="ENTER PIN" maxlength="4">
-            <div class="auth-msg">Hint: 1234</div>
-        </div>
+            <input type="password" id="pinInput" class="auth-input" placeholder="ENTER PASSWORD">
+            </div>
     </div>
 
     <div id="sync-status">Syncing with Google Sheets...</div>
@@ -201,10 +200,15 @@
 <script>
     // --- CONFIGURATION ---
     // !!! PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT URL HERE !!!
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNlyBkMR43Z2Lx8RVVnRYuEWINTtOASOJqOJ3PWUEKo7gyaPSbDCw8oB34XJ9iGtCl/exec"; 
     
-    // CHANGE THIS TO SET YOUR PASSWORD
-    const APP_PIN = "1234"; 
+    // 1. Paste the Base64 String you just generated here:
+    const ENCODED_URL = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J5Tmx5QmtNUjQzWjJMeDhSVlZuUll1RVdJTlR0T0FTT0pxT0ozUFdVRUtvN2d5YVBTYkRDdzhvQjM0WEo5aUd0Q2wvZXhlYw=="; 
+    
+    // 2. Decode it on the fly (This hides it from simple text searches in Repo)
+    const APPS_SCRIPT_URL = atob(ENCODED_URL);
+    
+    // UPDATED PASSWORD
+    const APP_PIN = "Vamsi123"; 
 
     let jobs = [];
     let currentTab = 'applied';
@@ -215,9 +219,9 @@
     const pinInput = document.getElementById('pinInput');
     pinInput.focus();
     pinInput.addEventListener('keyup', (e) => {
+        // Auto-unlocks when you type the correct password
         if(e.target.value === APP_PIN) {
             document.getElementById('auth-screen').classList.add('unlocked');
-            // Wait for unlock animation, then fetch data
             setTimeout(fetchJobs, 500); 
         }
     });
